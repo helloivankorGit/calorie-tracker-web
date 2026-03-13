@@ -66,7 +66,7 @@ export default function Home() {
           <h1 className="text-2xl font-bold text-gray-900">🍎 Calorie Tracker</h1>
           <div className="flex items-center gap-4">
             <Link href="/calendar" className="text-blue-600 hover:text-blue-700 font-medium">
-              📅 Calendar
+              Calendar
             </Link>
             <Link href="/profile" className="text-blue-600 hover:text-blue-700 font-medium">
               Profile
