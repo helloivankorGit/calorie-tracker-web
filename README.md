@@ -1,36 +1,173 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍎 Calorie Tracker Web
+
+A modern web-based calorie tracking application with AI-powered food analysis, built with Next.js 14.
+
+## Features
+
+- 📸 **AI Food Analysis**: Take a photo of your meal and get instant calorie and nutrition information
+- 📊 **Daily Tracking**: Monitor your calorie intake with beautiful progress visualization
+- 🎯 **Personalized Goals**: Custom calorie targets based on your profile and activity level
+- 💾 **Local Storage**: All data stored locally in your browser (privacy-first)
+- 📱 **Mobile-First Design**: Responsive design that works on all devices
+- ⚡ **Fast & Modern**: Built with Next.js 14, React 19, and Tailwind CSS
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- Google AI API key (for Gemini AI food analysis)
+
+### Installation
+
+1. Clone the repository or navigate to the project folder
+
+2. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Set up environment variables:
+Create a `.env.local` file in the root directory:
+```
+NEXT_PUBLIC_GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To get a Google AI API key:
+- Visit https://makersuite.google.com/app/apikey
+- Sign in with your Google account
+- Click "Create API Key"
+- Copy the key to your `.env.local` file
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### First Time Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Click "Get Started" on the welcome screen
+2. Complete the 3-step onboarding:
+   - Enter your name, age, and gender
+   - Provide your height and weight
+   - Select your activity level
+3. Your personalized daily calorie goal will be calculated automatically
 
-## Deploy on Vercel
+### Adding Meals
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Click "+ Add Meal" from the dashboard
+2. Select a food image from your device
+3. Click "Analyze Food" to get AI-powered nutrition analysis
+4. Review the results and click "Save Meal"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Viewing Progress
+
+- The dashboard shows your daily calorie progress with a visual circle
+- View all meals logged today with their nutrition information
+- Track remaining calories to meet your goal
+
+## Project Structure
+
+```
+calorie-tracker-web/
+├── app/                      # Next.js app directory
+│   ├── page.tsx             # Main dashboard
+│   ├── add-meal/            # Meal entry page
+│   ├── onboarding/          # User onboarding flow
+│   └── profile/             # User profile & settings
+├── lib/                     # Core library code
+│   ├── services/            # Business logic
+│   │   ├── food-analyzer.ts     # AI food analysis
+│   │   ├── storage.ts           # LocalStorage wrapper
+│   │   └── calorie-calculator.ts # Calorie calculations
+│   └── types/               # TypeScript type definitions
+│       └── models.ts
+├── components/              # React components (future)
+├── public/                  # Static assets
+└── .env.local              # Environment variables (not in git)
+```
+
+## Technologies
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **AI**: Google Gemini AI (gemini-1.5-flash)
+- **Storage**: Browser LocalStorage
+
+## Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. Push your code to GitHub
+
+2. Import the project in Vercel:
+   - Visit [vercel.com](https://vercel.com)
+   - Click "Import Project"
+   - Select your GitHub repository
+
+3. Add environment variables in Vercel:
+   - Go to Project Settings → Environment Variables
+   - Add `NEXT_PUBLIC_GOOGLE_AI_API_KEY` with your API key
+
+4. Deploy!
+
+Your app will be live at `https://your-project.vercel.app`
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+## Privacy & Data
+
+- All user data is stored locally in the browser's LocalStorage
+- No data is sent to external servers (except food images to Google AI for analysis)
+- You can clear all data anytime from the Profile page
+
+## Development
+
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+## Troubleshooting
+
+### "No API key found" error
+- Make sure you created `.env.local` file
+- Verify the key is named `NEXT_PUBLIC_GOOGLE_AI_API_KEY`
+- Restart the development server after adding environment variables
+
+### Food analysis not working
+- Check your Google AI API key is valid
+- Ensure the image is a clear photo of food
+- Check browser console for detailed error messages
+
+### Data not persisting
+- LocalStorage only works in browsers (not in SSR)
+- Check browser privacy settings allow LocalStorage
+- Clear browser cache if experiencing issues
+
+## License
+
+MIT License - feel free to use this project for personal or commercial purposes!
+
+## Credits
+
+Adapted from the Expo-based Calorie Tracker app, rebuilt for universal web access.
