@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { analyzeFoodImage, analyzeFoodText } from '@/lib/services/food-analyzer';
+import { analyzeFoodImage, analyzeFoodText, analyzeFoodWithCorrection } from '@/lib/services/food-analyzer';
 import { saveMeal } from '@/lib/services/storage';
 import { MealEntry } from '@/lib/types/models';
 
@@ -17,6 +17,8 @@ export default function AddMeal() {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string>('');
+  const [correctionText, setCorrectionText] = useState('');
+  const [correcting, setCorrecting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,6 +52,23 @@ export default function AddMeal() {
     }
   };
 
+  const handleCorrection = async () => {
+    if (!correctionText.trim() || !result) return;
+    setCorrecting(true);
+    setError('');
+    try {
+      const updated = await analyzeFoodWithCorrection(result, correctionText.trim(), selectedFile ?? null);
+      if (updated) {
+        setResult(updated);
+        setCorrectionText('');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to apply correction. Please try again.');
+    } finally {
+      setCorrecting(false);
+    }
+  };
+
   const handleSave = () => {
     if (!result) return;
 
@@ -75,6 +94,7 @@ export default function AddMeal() {
     setSelectedFile(null);
     setTextInput('');
     setError('');
+    setCorrectionText('');
     setMode('select');
   };
 
@@ -248,6 +268,25 @@ export default function AddMeal() {
                     <div className="text-sm text-gray-600">Fat</div>
                   </div>
                 </div>
+              </div>
+
+              {/* Correction */}
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 space-y-3">
+                <p className="text-sm font-medium text-yellow-800">✏️ Something wrong? Correct it</p>
+                <textarea
+                  value={correctionText}
+                  onChange={(e) => setCorrectionText(e.target.value)}
+                  placeholder='e.g. "It was 2 servings" or "the sauce was cream-based, not tomato"'
+                  rows={2}
+                  className="w-full px-3 py-2 border border-yellow-300 rounded-lg text-sm text-black placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none bg-white"
+                />
+                <button
+                  onClick={handleCorrection}
+                  disabled={correcting || !correctionText.trim()}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-200 disabled:text-yellow-400 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  {correcting ? 'Recalculating...' : 'Recalculate'}
+                </button>
               </div>
 
               {/* Action Buttons */}

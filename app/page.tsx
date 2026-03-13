@@ -64,12 +64,14 @@ export default function Home() {
       <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">🍎 Calorie Tracker</h1>
-          <Link
-            href="/profile"
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            Profile
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/calendar" className="text-blue-600 hover:text-blue-700 font-medium">
+              📅 Calendar
+            </Link>
+            <Link href="/profile" className="text-blue-600 hover:text-blue-700 font-medium">
+              Profile
+            </Link>
+          </div>
         </div>
       </header>
 

@@ -123,6 +123,67 @@ Respond ONLY with valid JSON.`;
 }
 
 /**
+ * Re-analyze food with a user correction applied on top of the previous result
+ */
+export async function analyzeFoodWithCorrection(
+  previousResult: FoodAnalysisResult,
+  correction: string,
+  file?: File | Blob | null
+): Promise<FoodAnalysisResult | null> {
+  if (!genAI) {
+    throw new Error('Google AI API key is not configured');
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+
+    const previousSummary = JSON.stringify({
+      foodItems: previousResult.foodItems,
+      calories: previousResult.calories,
+      portions: previousResult.portions,
+      nutritionInfo: previousResult.nutritionInfo,
+    });
+
+    const prompt = `You are a nutrition expert. You previously analyzed a meal and got this result:
+${previousSummary}
+
+The user has provided a correction or additional detail:
+"${correction}"
+
+Please recalculate the nutritional values taking the correction into account. For example, if the user says "actually it was 2 portions" or "the sauce was cream-based", adjust accordingly.
+
+Respond ONLY with valid JSON in this format:
+{
+  "foodItems": ["item 1", "item 2"],
+  "calories": 500,
+  "description": "Updated description",
+  "portions": "Updated portion info",
+  "confidence": "High|Medium|Low",
+  "nutritionInfo": { "protein": 25, "carbs": 60, "fat": 15, "fiber": 8 },
+  "needsMoreInfo": false,
+  "questions": []
+}`;
+
+    const parts: (string | { inlineData: { mimeType: string; data: string } })[] = [prompt];
+
+    if (file) {
+      const base64 = await fileToBase64(file);
+      parts.push({ inlineData: { mimeType: file.type || 'image/jpeg', data: base64 } });
+    }
+
+    const response = await model.generateContent(parts);
+    const text = response.response.text();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) return JSON.parse(jsonMatch[0]);
+
+    return null;
+  } catch (error) {
+    console.error('Error re-analyzing food with correction:', error);
+    throw error;
+  }
+}
+
+/**
  * Analyze food from a text description
  * @param description - Text description of the food (e.g. "2 bananas and a glass of milk")
  * @returns Food analysis result with calorie estimation

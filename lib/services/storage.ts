@@ -92,6 +92,28 @@ export function deleteMeal(mealId: string, date: string): void {
   }
 }
 
+/**
+ * Returns a map of date → total calories for all days that have logged meals.
+ * Scans localStorage for all keys matching the meals prefix.
+ */
+export function getAllMealDates(): Record<string, number> {
+  if (!isBrowser()) return {};
+  const result: Record<string, number> = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(STORAGE_KEYS.MEALS_PREFIX)) {
+        const date = key.replace(STORAGE_KEYS.MEALS_PREFIX, '');
+        const meals: MealEntry[] = JSON.parse(localStorage.getItem(key) || '[]');
+        result[date] = meals.reduce((sum, m) => sum + m.calories, 0);
+      }
+    }
+  } catch (error) {
+    console.error('Error reading meal dates:', error);
+  }
+  return result;
+}
+
 // ========== Data Management ==========
 
 export function clearAllData(): void {
